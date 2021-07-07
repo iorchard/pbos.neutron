@@ -1,0 +1,53 @@
+---
+prereq_pkgs:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - openstack-pkg-tools
+  - iptables
+
+# osbpo apt repo keyring
+osbpo_keyring:
+  url: "http://osbpo.debian.net/osbpo/dists/pubkey.gpg"
+  file: "/usr/share/keyrings/osbpo-keyring.gpg"
+
+# osbpo apt repo
+osbpo_repos:
+  - repo: "deb [signed-by=/usr/share/keyrings/osbpo-keyring.gpg] http://osbpo.debian.net/osbpo bullseye-{{ openstack_release }}-backports main"
+    filename: "openstack"
+  - repo: "deb [signed-by=/usr/share/keyrings/osbpo-keyring.gpg] http://osbpo.debian.net/osbpo bullseye-{{ openstack_release }}-backports-nochange main"
+    filename: "openstack"
+
+controller_packages:
+  - neutron-server
+  - neutron-linuxbridge-agent
+  - neutron-l3-agent
+  - neutron-dhcp-agent
+  - neutron-metadata-agent
+
+compute_packages:
+  - neutron-linuxbridge-agent
+
+os_service_init:
+  - {dest: "/etc/init.d/neutron-api"}
+
+os_service_conf: 
+  - {dest: "/etc/neutron/neutron.conf"}
+  - {dest: "/etc/neutron/neutron-api-uwsgi-bind.ini"}
+  - {dest: "/etc/neutron/metadata_agent.ini"}
+  - {dest: "/etc/neutron/plugins/ml2/linuxbridge_agent.ini"}
+
+os_service_conf_compute: 
+  - {dest: "/etc/neutron/neutron.conf"}
+  - {dest: "/etc/neutron/plugins/ml2/linuxbridge_agent.ini"}
+
+os_systemd_service_name:
+  - neutron-api
+  - neutron-linuxbridge-agent
+  - neutron-dhcp-agent
+  - neutron-metadata-agent
+  - neutron-l3-agent
+
+os_systemd_compute_service_name:
+  - neutron-linuxbridge-agent
+...

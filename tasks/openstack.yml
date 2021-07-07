@@ -1,0 +1,47 @@
+---
+- name: OpenStack | create user
+  openstack.cloud.identity_user:
+    cloud: pbos
+    name: "{{ os_service_name }}"
+    password: "{{ os_password }}"
+    domain: default
+    default_project: service
+    state: present
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+  no_log: true
+
+- name: OpenStack | add user to admin role
+  openstack.cloud.role_assignment:
+    cloud: pbos
+    user: "{{ os_service_name }}"
+    role: admin
+    project: service
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+
+- name: OpenStack | create service
+  openstack.cloud.catalog_service:
+    cloud: pbos
+    name: "{{ os_service_name }}"
+    service_type: "network"
+    description: OpenStack Networking Service
+    state: present
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+
+- name: OpenStack | create endpoints
+  openstack.cloud.endpoint:
+    cloud: pbos
+    service: "{{ os_service_name }}"
+    endpoint_interface: "{{ item }}"
+    url: "http://{{ keepalived_vip }}:{{ neutron_port }}"
+    region: RegionOne
+    state: present
+  loop:
+    - public
+    - internal
+    - admin
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+...

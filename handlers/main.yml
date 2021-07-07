@@ -1,0 +1,32 @@
+---
+- name: systemctl restart systemd-modules-load.service
+  ansible.builtin.service:
+    name: "systemd-modules-load.service"
+    state: "restarted"
+  become: true
+  changed_when: false
+  register: restart_systemd_service
+  failed_when: restart_systemd_service.failed
+
+- name: systemctl restart service
+  service:
+    name: "{{ item }}.service"
+    state: "restarted"
+    enabled: true
+  become: true
+  changed_when: false
+  register: restart_systemd_service
+  failed_when: restart_systemd_service.failed
+  loop: "{{ os_systemd_service_name }}"
+
+- name: systemctl restart compute service
+  service:
+    name: "{{ item }}.service"
+    state: "restarted"
+    enabled: true
+  become: true
+  changed_when: false
+  register: restart_systemd_service
+  failed_when: restart_systemd_service.failed
+  loop: "{{ os_systemd_compute_service_name }}"
+...

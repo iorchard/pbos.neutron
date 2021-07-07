@@ -1,0 +1,50 @@
+[DEFAULT]
+auth_strategy = keystone
+core_plugin = ml2
+service_plugins = router
+allow_overlapping_ips = True
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+interface_driver = linuxbridge
+transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@{{ keepalived_vip }}
+l3_ha = true
+max_l3_agents_per_router = 2
+allow_automatic_l3agent_failover = true
+[agent]
+root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
+[cors]
+[database]
+connection = mysql+pymysql://{{ os_service_name }}:{{ db_password }}@{{ keepalived_vip }}/{{ os_service_name }}
+[ironic]
+[keystone_authtoken]
+www_authenticate_uri = http://{{ keepalived_vip }}:{{ keystone_port }}
+auth_url = http://{{ keepalived_vip }}:{{ keystone_port }}
+memcached_servers = {{ keepalived_vip }}:{{ memcached_port }}
+auth_type = password
+project_domain_name = Default
+user_domain_name = Default
+project_name = service
+username = {{ os_service_name }}
+password = {{ os_password }}
+[nova]
+auth_url = http://{{ keepalived_vip }}:{{ keystone_port }}
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = nova
+password = {{ nova_password }}
+[oslo_concurrency]
+lock_path = /var/lock/neutron
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+[oslo_messaging_rabbit]
+[oslo_middleware]
+[oslo_policy]
+policy_file = /etc/neutron/policy.json
+policy_dirs = /etc/neutron/policy.d
+[privsep]
+[quotas]
+[ssl]

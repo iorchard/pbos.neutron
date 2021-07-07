@@ -1,0 +1,68 @@
+---
+- name: Debian | add kernel modules
+  community.general.ini_file:
+    option: "{{ item }}"
+    state: present
+    path: "/etc/modules-load.d/{{ os_service_name }}.conf"
+    section: ""
+    mode: "0644"
+    allow_no_value: true
+  loop:
+    - br_netfilter
+  become: true
+
+- name: systemctl restart systemd-modules-load
+  ansible.builtin.systemd:
+    name: "systemd-modules-load.service"
+    state: "restarted"
+  become: true
+  register: restart_systemd_service
+  failed_when: restart_systemd_service.failed
+
+- name: Debian | Install prerequisite packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+    allow_unauthenticated: false
+  loop: "{{ prereq_pkgs }}"
+  become: true
+
+- name: Debian | Install openstack apt repo keyring
+  ansible.builtin.apt_key:
+    url: "{{ osbpo_keyring.url }}"
+    keyring: "{{ osbpo_keyring.file }}"
+    state: present
+  become: true
+
+- name: Debian | Add openstack apt repository
+  ansible.builtin.apt_repository:
+    repo: "{{ item.repo }}"
+    state: present
+    mode: "0644"
+    filename: "{{ item.filename }}"
+    update_cache: true
+    validate_certs: true
+  become: true
+  loop: "{{ osbpo_repos }}"
+
+- name: Debian | Install controller packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+    allow_unauthenticated: false
+  become: true
+  loop: "{{ controller_packages }}"
+  when: inventory_hostname in groups['controller']
+
+- name: Debian | Install compute packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+    allow_unauthenticated: false
+  become: true
+  loop: "{{ compute_packages }}"
+  when: inventory_hostname in groups['compute']
+...

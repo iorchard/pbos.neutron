@@ -1,0 +1,16 @@
+---
+openstack_release: "wallaby"
+keepalived_vip: ~
+os_service_name: "neutron"
+db_password: "{{ neutron_password }}"
+os_password: "{{ neutron_password }}"
+rabbitmq_openstack_password: ~
+nova_password: ~
+metadata_secret: ~
+provider_interface: ~
+overlay_interface: ~
+overlay_interface_ip: "{{ hostvars[inventory_hostname]['ansible_' + overlay_interface].ipv4.address }}"
+neutron_port: 9696
+keystone_port: 5000
+memcached_port: 11211
+...

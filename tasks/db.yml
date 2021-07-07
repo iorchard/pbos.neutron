@@ -1,0 +1,24 @@
+---
+- name: DB | create database
+  community.mysql.mysql_db:
+    login_unix_socket: "/run/mysqld/mysqld.sock"
+    login_user: "root"
+    login_password: "{{ mariadb_root_password }}"
+    name: "{{ os_service_name }}"
+    state: present
+  delegate_to: "{{ groups['mariadb'][0] }}"
+  run_once: true
+  no_log: true
+
+- name: DB | set user
+  community.mysql.mysql_user:
+    login_unix_socket: "/run/mysqld/mysqld.sock"
+    login_user: "root"
+    login_password: "{{ mariadb_root_password }}"
+    name: "{{ os_service_name }}"
+    host: "{{ item }}"
+    password: "{{ db_password }}"
+    priv: "{{ os_service_name }}.*:ALL,GRANT"
+  loop: "{{ openstack_mariadb_acl_cidr }}"
+  no_log: true
+...

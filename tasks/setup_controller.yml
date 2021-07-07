@@ -1,0 +1,47 @@
+---
+- name: Setup | set kernel parameters
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: "1"
+    state: present
+    reload: true
+    sysctl_set: true
+  become: true
+  loop:
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-ip6tables
+
+- name: Setup | copy init file
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    src: "{{ ansible_distribution | lower }}{{ item.dest }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  loop: "{{ os_service_init }}"
+  become: true
+
+- name: Setup | template configuration
+  ansible.builtin.template:
+    dest: "{{ item.dest }}"
+    src: "{{ ansible_distribution | lower }}{{ item.dest + '.j2' }}"
+    owner: "root"
+    group: "{{ os_service_name }}"
+    mode: "0640"
+    backup: true
+  loop: "{{ os_service_conf }}"
+  become: true
+  changed_when: true
+  notify:
+    - systemctl restart service
+
+- name: Setup | populate database
+  ansible.builtin.shell: |
+    su -s /bin/sh  -c "neutron-db-manage \
+      --config-file /etc/neutron/neutron.conf \
+      --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" \
+      neutron
+  become: true
+  delegate_to: "{{ groups['controller'][0] }}"
+  run_once: true
+...

@@ -1,0 +1,48 @@
+---
+- name: Main | include default variables
+  ansible.builtin.include_vars: "../vars/main.yml"
+
+- name: Main | include os specific variables
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
+  vars:
+    _params:
+      files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_release | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+      paths:
+        - "../vars"
+
+- name: Main | include DB tasks
+  ansible.builtin.include_tasks: "db.yml"
+  when: inventory_hostname in groups['controller']
+
+- name: Main | include openstack tasks
+  ansible.builtin.include_tasks: "openstack.yml"
+  when: inventory_hostname in groups['controller']
+
+- name: Main | include os specific tasks
+  ansible.builtin.include_tasks: "{{ lookup('first_found', _params) }}"
+  vars:
+    _params:
+      files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_release | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+      paths:
+        - "."
+
+- name: Main | include setup tasks for controller
+  ansible.builtin.include_tasks: "setup_controller.yml"
+  when: inventory_hostname in groups['controller']
+
+- name: Main | include setup tasks for compute
+  ansible.builtin.include_tasks: "setup_compute.yml"
+  when: inventory_hostname in groups['compute']
+...
