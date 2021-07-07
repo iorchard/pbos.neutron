@@ -30,6 +30,9 @@ compute_packages:
 
 os_service_init:
   - {dest: "/etc/init.d/neutron-api"}
+  - {dest: "/etc/neutron/l3_agent.ini"}
+  - {dest: "/etc/neutron/dhcp_agent.ini"}
+  - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini"}
 
 os_service_conf: 
   - {dest: "/etc/neutron/neutron.conf"}
