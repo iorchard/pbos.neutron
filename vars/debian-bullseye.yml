@@ -29,10 +29,13 @@ compute_packages:
   - neutron-linuxbridge-agent
 
 os_service_init:
-  - {dest: "/etc/init.d/neutron-api"}
-  - {dest: "/etc/neutron/l3_agent.ini"}
-  - {dest: "/etc/neutron/dhcp_agent.ini"}
-  - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini"}
+  - {dest: "/etc/init.d/neutron-api", mode: "0755"}
+  - {dest: "/etc/neutron/l3_agent.ini", mode: "0644"}
+  - {dest: "/etc/neutron/dhcp_agent.ini", mode: "0644"}
+  - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini", mode: "0644"}
+
+os_service_init_compute:
+  - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini", mode: "0644"}
 
 os_service_conf: 
   - {dest: "/etc/neutron/neutron.conf"}

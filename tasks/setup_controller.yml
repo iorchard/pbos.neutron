@@ -11,13 +11,13 @@
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
 
-- name: Setup | copy init file
+- name: Setup | copy init and static conf files
   ansible.builtin.copy:
     dest: "{{ item.dest }}"
     src: "{{ ansible_distribution | lower }}{{ item.dest }}"
     owner: "root"
     group: "root"
-    mode: "0755"
+    mode: "{{ item.mode }}"
   loop: "{{ os_service_init }}"
   become: true
 
