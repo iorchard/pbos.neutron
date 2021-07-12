@@ -49,7 +49,7 @@
 - name: Debian | Install controller packages
   ansible.builtin.apt:
     name: "{{ item }}"
-    state: present
+    state: latest
     update_cache: true
     allow_unauthenticated: false
   become: true
@@ -59,7 +59,7 @@
 - name: Debian | Install compute packages
   ansible.builtin.apt:
     name: "{{ item }}"
-    state: present
+    state: latest
     update_cache: true
     allow_unauthenticated: false
   become: true

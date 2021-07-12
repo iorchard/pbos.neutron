@@ -16,9 +16,11 @@
     login_user: "root"
     login_password: "{{ mariadb_root_password }}"
     name: "{{ os_service_name }}"
-    host: "{{ item }}"
+    host: "{{ item[0] }}"
     password: "{{ db_password }}"
     priv: "{{ os_service_name }}.*:ALL,GRANT"
-  loop: "{{ openstack_mariadb_acl_cidr }}"
+  delegate_to: "{{ item[1] }}"
+  run_once: true
+  loop: "{{ openstack_mariadb_acl_cidr | product(groups['mariadb']) | list }}"
   no_log: true
 ...
