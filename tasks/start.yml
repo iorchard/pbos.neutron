@@ -1,0 +1,50 @@
+---
+- name: Start | include default variables
+  tags: neutron
+  ansible.builtin.include_vars: "../vars/main.yml"
+
+- name: Start | include os specific variables
+  tags: neutron
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
+  vars:
+    _params:
+      files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_release | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+      paths:
+        - "../vars"
+
+- name: Start | start service
+  tags: neutron
+  block:
+    - name: Start | start service
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: "started"
+      become: true
+      register: start_service
+      failed_when: start_service.failed
+      loop: "{{ os_systemd_service_name }}"
+      when: inventory_hostname in groups['controller']
+    - name: Start | start service
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: "started"
+      become: true
+      register: start_service
+      failed_when: start_service.failed
+      loop: "{{ os_systemd_compute_service_name }}"
+      when: inventory_hostname in groups['compute']
+    - name: Start | wait until port is opened
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ neutron_port }}"
+        sleep: 2
+        timeout: 10
+        state: started
+      when: inventory_hostname in groups['controller']
+...

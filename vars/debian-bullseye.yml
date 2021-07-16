@@ -48,12 +48,12 @@ os_service_conf_compute:
   - {dest: "/etc/neutron/plugins/ml2/linuxbridge_agent.ini"}
 
 os_systemd_service_name:
-  - neutron-api
-  - neutron-linuxbridge-agent
-  - neutron-dhcp-agent
-  - neutron-metadata-agent
-  - neutron-l3-agent
+  - neutron-api.service
+  - neutron-linuxbridge-agent.service
+  - neutron-dhcp-agent.service
+  - neutron-metadata-agent.service
+  - neutron-l3-agent.service
 
 os_systemd_compute_service_name:
-  - neutron-linuxbridge-agent
+  - neutron-linuxbridge-agent.service
 ...

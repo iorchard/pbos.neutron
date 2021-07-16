@@ -1,0 +1,50 @@
+---
+- name: Stop | include default variables
+  tags: neutron
+  ansible.builtin.include_vars: "../vars/main.yml"
+
+- name: Stop | include os specific variables
+  tags: neutron
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
+  vars:
+    _params:
+      files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_release | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+      paths:
+        - "../vars"
+
+- name: Stop | stop service
+  tags: neutron
+  block:
+    - name: Stop | stop service on controller
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: "stopped"
+      become: true
+      register: stop_service
+      failed_when: stop_service.failed
+      loop: "{{ os_systemd_service_name }}"
+      when: inventory_hostname in groups['controller']
+    - name: Stop | stop service on compute
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: "stopped"
+      become: true
+      register: stop_service
+      failed_when: stop_service.failed
+      loop: "{{ os_systemd_compute_service_name }}"
+      when: inventory_hostname in groups['compute']
+    - name: Stop | wait until port is closed
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ neutron_port }}"
+        sleep: 2
+        timeout: 10
+        state: stopped
+      when: inventory_hostname in groups['controller']
+...
