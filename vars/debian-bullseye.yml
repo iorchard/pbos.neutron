@@ -3,6 +3,7 @@ prereq_pkgs:
   - apt-transport-https
   - ca-certificates
   - curl
+  - gpg
   - openstack-pkg-tools
   - iptables
 
