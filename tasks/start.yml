@@ -1,10 +1,14 @@
 ---
 - name: Start | import common tasks
-  tags: neutron
+  tags:
+    - neutron
+    - openstack
   ansible.builtin.import_tasks: "common.yml"
 
 - name: Start | start service
-  tags: neutron
+  tags:
+    - neutron
+    - openstack
   block:
     - name: Start | start service
       ansible.builtin.service:

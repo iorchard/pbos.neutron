@@ -20,11 +20,15 @@
   failed_when: restart_systemd_service.failed
 
 - name: Debian | Install prerequisite packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ item }}"
-    state: present
+    state: "{{ apt_state }}"
     update_cache: true
     allow_unauthenticated: false
+  register: _apt
+  until: not _apt.failed
+  retries: 3
+  delay: 3
   loop: "{{ prereq_pkgs }}"
   become: true
 
@@ -49,9 +53,13 @@
 - name: Debian | Install controller packages
   ansible.builtin.apt:
     name: "{{ item }}"
-    state: latest
+    state: "{{ apt_state }}"
     update_cache: true
     allow_unauthenticated: false
+  register: _apt
+  until: not _apt.failed
+  retries: 3
+  delay: 3
   become: true
   loop: "{{ controller_packages }}"
   when: inventory_hostname in groups['controller']
@@ -59,9 +67,13 @@
 - name: Debian | Install compute packages
   ansible.builtin.apt:
     name: "{{ item }}"
-    state: latest
+    state: "{{ apt_state }}"
     update_cache: true
     allow_unauthenticated: false
+  register: _apt
+  until: not _apt.failed
+  retries: 3
+  delay: 3
   become: true
   loop: "{{ compute_packages }}"
   when: inventory_hostname in groups['compute']

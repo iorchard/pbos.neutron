@@ -3,20 +3,24 @@
   ansible.builtin.service:
     name: "systemd-modules-load.service"
     state: "restarted"
+  register: _restart_service
+  until: _restart_service.state == "started"
+  retries: 3
+  delay: 3
   become: true
   changed_when: false
-  register: restart_systemd_service
-  failed_when: restart_systemd_service.failed
 
 - name: systemctl restart service
   service:
     name: "{{ item }}"
     state: "restarted"
     enabled: true
+  register: _restart_service
+  until: _restart_service.state == "started"
+  retries: 3
+  delay: 3
   become: true
   changed_when: false
-  register: restart_systemd_service
-  failed_when: restart_systemd_service.failed
   loop: "{{ os_systemd_service_name }}"
 
 - name: systemctl restart compute service
@@ -24,9 +28,11 @@
     name: "{{ item }}"
     state: "restarted"
     enabled: true
+  register: _restart_service
+  until: _restart_service.state == "started"
+  retries: 3
+  delay: 3
   become: true
   changed_when: false
-  register: restart_systemd_service
-  failed_when: restart_systemd_service.failed
   loop: "{{ os_systemd_compute_service_name }}"
 ...
