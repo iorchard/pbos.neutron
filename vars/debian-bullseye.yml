@@ -39,15 +39,16 @@ os_service_init:
 os_service_init_compute:
   - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini", mode: "0644"}
 
+os_conf_dir: "/etc/neutron"
 os_service_conf: 
-  - {dest: "/etc/neutron/neutron.conf"}
-  - {dest: "/etc/neutron/neutron-api-uwsgi-bind.ini"}
-  - {dest: "/etc/neutron/metadata_agent.ini"}
-  - {dest: "/etc/neutron/plugins/ml2/linuxbridge_agent.ini"}
+  - {dest: "{{ os_conf_dir }}/neutron.conf"}
+  - {dest: "{{ os_conf_dir }}/neutron-api-uwsgi-bind.ini"}
+  - {dest: "{{ os_conf_dir }}/metadata_agent.ini"}
+  - {dest: "{{ os_conf_dir }}/plugins/ml2/linuxbridge_agent.ini"}
 
 os_service_conf_compute: 
-  - {dest: "/etc/neutron/neutron.conf"}
-  - {dest: "/etc/neutron/plugins/ml2/linuxbridge_agent.ini"}
+  - {dest: "{{ os_conf_dir }}/neutron.conf"}
+  - {dest: "{{ os_conf_dir }}/plugins/ml2/linuxbridge_agent.ini"}
 
 os_systemd_service_name:
   - neutron-api.service

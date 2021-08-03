@@ -23,7 +23,6 @@
     - openstack
   ansible.builtin.apt:
     name: "{{ item }}"
-    autoremove: true
     purge: true
     state: absent
   loop: "{{ compute_packages }}"
@@ -43,4 +42,13 @@
   delegate_to: "{{ groups['mariadb'][0] }}"
   run_once: true
   no_log: true
+
+- name: Delete | delete config directory
+  tags:
+    - neutron
+    - openstack
+  ansible.builtin.file:
+    path: "{{ os_conf_dir }}"
+    state: absent
+  become: true
 ...
