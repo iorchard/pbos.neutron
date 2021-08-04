@@ -1,0 +1,67 @@
+---
+- name: Ubuntu | add kernel modules
+  community.general.ini_file:
+    option: "{{ item }}"
+    state: present
+    path: "/etc/modules-load.d/{{ os_service_name }}.conf"
+    section: ""
+    mode: "0644"
+    allow_no_value: true
+  loop:
+    - br_netfilter
+  become: true
+
+- name: systemctl restart systemd-modules-load
+  ansible.builtin.systemd:
+    name: "systemd-modules-load.service"
+    state: "restarted"
+  become: true
+  register: restart_systemd_service
+  failed_when: restart_systemd_service.failed
+
+- name: Ubuntu | Install prerequisite packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: "{{ apt_state }}"
+    update_cache: true
+    allow_unauthenticated: false
+  register: _apt
+  until: not _apt.failed
+  retries: 3
+  delay: 3
+  loop: "{{ prereq_pkgs }}"
+  become: true
+
+- name: Ubuntu | add openstack repository
+  ansible.builtin.command: >-
+    add-apt-repository -y cloud-archive:{{ openstack_release }}
+  become: true
+
+- name: Ubuntu | Install controller packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: "{{ apt_state }}"
+    update_cache: true
+    allow_unauthenticated: false
+  register: _apt
+  until: not _apt.failed
+  retries: 3
+  delay: 3
+  become: true
+  loop: "{{ controller_packages }}"
+  when: inventory_hostname in groups['controller']
+
+- name: Ubuntu | Install compute packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: "{{ apt_state }}"
+    update_cache: true
+    allow_unauthenticated: false
+  register: _apt
+  until: not _apt.failed
+  retries: 3
+  delay: 3
+  become: true
+  loop: "{{ compute_packages }}"
+  when: inventory_hostname in groups['compute']
+...

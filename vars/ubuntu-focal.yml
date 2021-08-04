@@ -1,0 +1,50 @@
+---
+apt_state: "latest"
+prereq_pkgs:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gpg
+  - openstack-pkg-tools
+  - iptables
+
+controller_packages:
+  - neutron-common
+  - neutron-server
+  - neutron-linuxbridge-agent
+  - neutron-l3-agent
+  - neutron-dhcp-agent
+  - neutron-metadata-agent
+
+compute_packages:
+  - neutron-common
+  - neutron-linuxbridge-agent
+
+os_service_init:
+  - {dest: "/etc/neutron/l3_agent.ini", mode: "0644"}
+  - {dest: "/etc/neutron/dhcp_agent.ini", mode: "0644"}
+  - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini", mode: "0644"}
+
+os_service_init_compute:
+  - {dest: "/etc/neutron/plugins/ml2/ml2_conf.ini", mode: "0644"}
+
+os_conf_dir: "/etc/neutron"
+os_service_conf: 
+  - {dest: "{{ os_conf_dir }}/neutron.conf"}
+  - {dest: "{{ os_conf_dir }}/metadata_agent.ini"}
+  - {dest: "{{ os_conf_dir }}/plugins/ml2/linuxbridge_agent.ini"}
+
+os_service_conf_compute: 
+  - {dest: "{{ os_conf_dir }}/neutron.conf"}
+  - {dest: "{{ os_conf_dir }}/plugins/ml2/linuxbridge_agent.ini"}
+
+os_systemd_service_name:
+  - neutron-server.service
+  - neutron-linuxbridge-agent.service
+  - neutron-dhcp-agent.service
+  - neutron-metadata-agent.service
+  - neutron-l3-agent.service
+
+os_systemd_compute_service_name:
+  - neutron-linuxbridge-agent.service
+...
