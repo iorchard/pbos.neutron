@@ -12,6 +12,7 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: absent
+    purge: true
   loop: "{{ controller_packages }}"
   become: true
   when: inventory_hostname in groups['controller']
@@ -23,6 +24,7 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: absent
+    purge: true
   loop: "{{ compute_packages }}"
   become: true
   when: inventory_hostname in groups['compute']
