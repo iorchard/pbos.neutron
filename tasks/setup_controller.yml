@@ -1,5 +1,5 @@
 ---
-- name: Setup | set kernel parameters
+- name: Setup controller | set kernel parameters
   ansible.posix.sysctl:
     name: "{{ item }}"
     value: "1"
@@ -11,7 +11,7 @@
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
 
-- name: Setup | copy init and static conf files
+- name: Setup controller | copy init and static conf files
   ansible.builtin.copy:
     dest: "{{ item.dest }}"
     src: "{{ ansible_os_family | lower }}{{ item.dest }}"
@@ -21,21 +21,31 @@
   loop: "{{ os_service_init }}"
   become: true
 
-- name: Setup | template configuration
+- name: Setup controller | template configuration
   ansible.builtin.template:
     dest: "{{ item.dest }}"
     src: "{{ ansible_os_family | lower }}{{ item.dest + '.j2' }}"
     owner: "root"
     group: "{{ os_service_name }}"
     mode: "0640"
-    backup: true
   loop: "{{ os_service_conf }}"
   become: true
   changed_when: true
   notify:
     - systemctl restart service
 
-- name: Setup | populate database
+- name: Setup controller | symlink ml2_conf.ini to plugin.ini
+  ansible.builtin.file:
+    dest: "/etc/neutron/plugin.ini"
+    src: "/etc/neutron/plugins/ml2/ml2_conf.ini"
+    owner: "root"
+    group: "{{ os_service_name }}"
+    mode: "0640"
+    state: link
+  become: true
+  when: ansible_os_family == 'RedHat'
+
+- name: Setup controller | populate database
   ansible.builtin.shell: |
     su -s /bin/sh  -c "neutron-db-manage \
       --config-file /etc/neutron/neutron.conf \

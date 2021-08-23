@@ -1,5 +1,5 @@
 ---
-- name: Setup | set kernel parameters
+- name: Setup compute | set kernel parameters
   ansible.posix.sysctl:
     name: "{{ item }}"
     value: "1"
@@ -11,7 +11,7 @@
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
 
-- name: Setup | copy static conf files
+- name: Setup compute | copy static conf files
   ansible.builtin.copy:
     dest: "{{ item.dest }}"
     src: "{{ ansible_os_family | lower }}{{ item.dest }}"
@@ -21,7 +21,7 @@
   loop: "{{ os_service_init_compute }}"
   become: true
 
-- name: Setup | template configuration
+- name: Setup compute | template configuration
   ansible.builtin.template:
     dest: "{{ item.dest }}"
     src: "{{ ansible_os_family | lower }}{{ item.dest + '.j2' }}"

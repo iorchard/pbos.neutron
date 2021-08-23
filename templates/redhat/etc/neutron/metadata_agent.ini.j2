@@ -1,0 +1,9 @@
+[DEFAULT]
+nova_metadata_host = {{ keepalived_vip }}
+metadata_proxy_shared_secret = {{ metadata_secret }}
+metadata_workers = 2
+[agent]
+[cache]
+backend = dogpile.cache.memcached
+enabled = true
+memcache_servers = {{ keepalived_vip }}:{{ memcached_port }}

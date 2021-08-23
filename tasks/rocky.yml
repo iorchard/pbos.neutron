@@ -1,5 +1,5 @@
 ---
-- name: Ubuntu | add kernel modules
+- name: Rocky Linux | add kernel modules
   community.general.ini_file:
     option: "{{ item }}"
     state: present
@@ -11,7 +11,7 @@
     - br_netfilter
   become: true
 
-- name: Ubuntu | systemctl restart systemd-modules-load
+- name: Rocky Linux | systemctl restart systemd-modules-load
   ansible.builtin.systemd:
     name: "systemd-modules-load.service"
     state: "restarted"
@@ -20,7 +20,7 @@
   register: restart_systemd_service
   failed_when: restart_systemd_service.failed
 
-- name: Ubuntu | Install prerequisite packages
+- name: Rocky Linux | Install prerequisite packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: "{{ pkg_state }}"
@@ -31,12 +31,17 @@
   loop: "{{ prereq_pkgs }}"
   become: true
 
-- name: Ubuntu | add openstack repository
+- name: Rocky Linux | enable powertools repo
   ansible.builtin.command: >-
-    add-apt-repository -y cloud-archive:{{ openstack_release }}
+    dnf config-manager --set-enabled powertools
   become: true
 
-- name: Ubuntu | Install controller packages
+- name: Rocky Linux | add openstack repository
+  ansible.builtin.command: >-
+    dnf -y install {{ openstack_repo_rpm }}
+  become: true
+
+- name: Rocky Linux | Install controller packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: "{{ pkg_state }}"
@@ -48,12 +53,10 @@
   loop: "{{ controller_packages }}"
   when: inventory_hostname in groups['controller']
 
-- name: Ubuntu | Install compute packages
+- name: Rocky Linux | Install compute packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: "{{ pkg_state }}"
-    update_cache: true
-    allow_unauthenticated: false
   register: _pkg
   until: not _pkg.failed
   retries: 3
