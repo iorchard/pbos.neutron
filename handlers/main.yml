@@ -11,7 +11,7 @@
   changed_when: false
 
 - name: systemctl restart service
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: "restarted"
     enabled: true
@@ -24,7 +24,7 @@
   loop: "{{ os_systemd_service_name }}"
 
 - name: systemctl restart compute service
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: "restarted"
     enabled: true

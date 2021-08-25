@@ -9,10 +9,9 @@
   tags:
     - neutron
     - openstack
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: absent
-    purge: true
   loop: "{{ controller_packages }}"
   become: true
   when: inventory_hostname in groups['controller']
@@ -21,10 +20,9 @@
   tags:
     - neutron
     - openstack
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: absent
-    purge: true
   loop: "{{ compute_packages }}"
   become: true
   when: inventory_hostname in groups['compute']
@@ -34,7 +32,7 @@
     - neutron
     - openstack
   community.mysql.mysql_db:
-    login_unix_socket: "/run/mysqld/mysqld.sock"
+    login_unix_socket: "{{ mariadb_service_socket }}"
     login_user: "root"
     login_password: "{{ mariadb_root_password }}"
     name: "{{ os_service_name }}"

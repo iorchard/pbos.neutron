@@ -6,12 +6,14 @@ prereq_pkgs:
   - iptables
 
 controller_packages:
+  - openstack-neutron-common
   - openstack-neutron
   - openstack-neutron-ml2
   - openstack-neutron-linuxbridge
   - iptables-ebtables
 
 compute_packages:
+  - openstack-neutron-common
   - openstack-neutron-linuxbridge
   - iptables-ebtables
   - ipset
