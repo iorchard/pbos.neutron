@@ -7,7 +7,7 @@ allow_overlapping_ips = True
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
 interface_driver = linuxbridge
-transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@{{ keepalived_vip }}
+transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@{{ keepalived_vip }}:{{ rabbitmq_tls_port }}
 l3_ha = true
 l3_ha_network_type = vxlan
 max_l3_agents_per_router = 2
@@ -17,7 +17,7 @@ dhcp_agents_per_network = 3
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 [cors]
 [database]
-connection = mysql+pymysql://{{ os_service_name }}:{{ db_password }}@{{ keepalived_vip }}/{{ os_service_name }}
+connection = mysql+pymysql://{{ os_service_name }}:{{ db_password }}@{{ keepalived_vip }}/{{ os_service_name }}?charset=utf8&ssl_ca={{ mariadb_ca_cert }}
 [ironic]
 [keystone_authtoken]
 www_authenticate_uri = http://{{ keepalived_vip }}:{{ keystone_port }}
@@ -44,6 +44,9 @@ lock_path = /var/lib/neutron/tmp
 [oslo_messaging_kafka]
 [oslo_messaging_notifications]
 [oslo_messaging_rabbit]
+ssl=true
+ssl_version=TLSv1_2
+ssl_ca_file={{ rabbitmq_ca_cert }}
 [oslo_middleware]
 [oslo_policy]
 policy_file = /etc/neutron/policy.json

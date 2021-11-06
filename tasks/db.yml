@@ -19,6 +19,8 @@
     host: "{{ item[0] }}"
     password: "{{ db_password }}"
     priv: "{{ os_service_name }}.*:ALL,GRANT"
+    tls_requires:
+      ssl:
   delegate_to: "{{ item[1] }}"
   run_once: true
   loop: "{{ openstack_mariadb_acl_cidr | product(groups['mariadb']) | list }}"

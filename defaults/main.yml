@@ -13,4 +13,8 @@ overlay_interface_ip: "{{ hostvars[inventory_hostname]['ansible_' + overlay_inte
 neutron_port: 9696
 keystone_port: 5000
 memcached_port: 11211
+rabbitmq_port: 5672
+rabbitmq_tls_port: 5671
+mariadb_ca_cert: "/etc/my.cnf.d/certificates/ca-cert.pem"
+rabbitmq_ca_cert: "/etc/rabbitmq/certificates/ca-cert.pem"
 ...
