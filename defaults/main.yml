@@ -1,4 +1,5 @@
 ---
+offline: false
 openstack_release: "wallaby"
 keepalived_vip: ~
 os_service_name: "neutron"
