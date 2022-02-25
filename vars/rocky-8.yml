@@ -18,9 +18,6 @@ compute_packages:
   - iptables-ebtables
   - ipset
 
-#openstack_repo_rpm: "https://www.rdoproject.org/repos/rdo-release.el8.rpm"
-openstack_repo_rpm: "https://repos.fedorapeople.org/repos/openstack/openstack-{{ openstack_release }}/rdo-release-{{ openstack_release }}-2.el8.noarch.rpm"
-
 mariadb_service_socket: "/var/lib/mysql/mysql.sock"
 
 os_service_init:
