@@ -18,4 +18,8 @@ rabbitmq_port: 5672
 rabbitmq_tls_port: 5671
 mariadb_ca_cert: "/etc/my.cnf.d/certificates/ca-cert.pem"
 rabbitmq_ca_cert: "/etc/rabbitmq/certificates/ca-cert.pem"
+os_endpoint_interface:
+  - { name: 'public', url: "http://{{ keepalived_vip_svc | ternary(keepalived_vip_svc, keepalived_vip) }}:{{ neutron_port }}" }
+  - { name: 'internal', url: "http://{{ keepalived_vip }}:{{ neutron_port }}" }
+  - { name: 'admin', url: "http://{{ keepalived_vip }}:{{ neutron_port }}" }
 ...

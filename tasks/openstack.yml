@@ -34,14 +34,11 @@
   openstack.cloud.endpoint:
     cloud: pbos
     service: "{{ os_service_name }}"
-    endpoint_interface: "{{ item }}"
-    url: "http://{{ keepalived_vip }}:{{ neutron_port }}"
+    endpoint_interface: "{{ item.name }}"
+    url: "{{ item.url }}"
     region: RegionOne
     state: present
-  loop:
-    - public
-    - internal
-    - admin
+  loop: "{{ os_endpoint_interface }}"
   delegate_to: "{{ groups['keystone'][0] }}"
   run_once: true
 ...
