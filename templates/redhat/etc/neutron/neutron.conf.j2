@@ -3,7 +3,6 @@ bind_host = {{ ansible_host }}
 auth_strategy = keystone
 core_plugin = ml2
 service_plugins = router
-allow_overlapping_ips = True
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
 interface_driver = linuxbridge
@@ -50,8 +49,10 @@ ssl_version=TLSv1_2
 ssl_ca_file={{ rabbitmq_ca_cert }}
 [oslo_middleware]
 [oslo_policy]
-policy_file = /etc/neutron/policy.json
-policy_dirs = /etc/neutron/policy.d
+#enforce_scope = True
+#enforce_new_defaults = True
+policy_file = policy.yaml
+policy_dirs = policy.d
 [privsep]
 [quotas]
 quota_floatingip = -1

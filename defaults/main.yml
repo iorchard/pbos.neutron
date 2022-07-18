@@ -1,6 +1,6 @@
 ---
 offline: false
-openstack_release: "wallaby"
+openstack_release: "yoga"
 keepalived_vip: ~
 os_service_name: "neutron"
 db_password: "{{ neutron_password }}"
