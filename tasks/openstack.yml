@@ -11,7 +11,7 @@
   run_once: true
   no_log: true
 
-- name: OpenStack | add user to admin role
+- name: OpenStack | add admin role to user
   openstack.cloud.role_assignment:
     cloud: pbos
     user: "{{ os_service_name }}"
