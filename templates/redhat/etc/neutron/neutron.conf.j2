@@ -2,7 +2,7 @@
 bind_host = {{ ansible_host }}
 auth_strategy = keystone
 core_plugin = ml2
-service_plugins = router
+service_plugins = router,metering,qos
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
 interface_driver = linuxbridge
@@ -47,6 +47,8 @@ driver = messagingv2
 ssl=true
 ssl_version=TLSv1_2
 ssl_ca_file={{ rabbitmq_ca_cert }}
+heatbeat_in_pthread=False
+rabbit_quorum_queue=True
 [oslo_middleware]
 [oslo_policy]
 #enforce_scope = True
