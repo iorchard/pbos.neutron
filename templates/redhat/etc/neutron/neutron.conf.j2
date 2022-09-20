@@ -12,6 +12,8 @@ l3_ha_network_type = vxlan
 max_l3_agents_per_router = 2
 allow_automatic_l3agent_failover = true
 dhcp_agents_per_network = 3
+api_workers = {{ neutron_workers }}
+rpc_workers = {{ (neutron_workers/2)|int }}
 [agent]
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 [cors]

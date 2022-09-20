@@ -11,6 +11,7 @@ metadata_secret: ~
 provider_interface: ~
 overlay_interface: ~
 overlay_interface_ip: "{{ hostvars[inventory_hostname]['ansible_' + overlay_interface].ipv4.address }}"
+neutron_workers: 4
 neutron_port: 9696
 keystone_port: 5000
 memcached_port: 11211
