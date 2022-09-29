@@ -44,6 +44,7 @@ os_systemd_service_name:
   - neutron-dhcp-agent.service
   - neutron-metadata-agent.service
   - neutron-l3-agent.service
+  - neutron-netns-cleanup.service
 
 os_systemd_compute_service_name:
   - neutron-linuxbridge-agent.service
