@@ -50,7 +50,13 @@ ssl=true
 ssl_version=TLSv1_2
 ssl_ca_file={{ rabbitmq_ca_cert }}
 heatbeat_in_pthread=False
-rabbit_quorum_queue=True
+rabbit_retry_interval={{ rabbit_retry_interval }}
+rabbit_retry_backoff={{ rabbit_retry_backoff }}
+rabbit_interval_max={{ rabbit_interval_max }}
+rabbit_quorum_queue={{ rabbit_quorum_queue }}
+heartbeat_timeout_threshold={{ heartbeat_timeout_threshold }}
+heartbeat_rate={{ heartbeat_rate }}
+
 [oslo_middleware]
 [oslo_policy]
 #enforce_scope = True
