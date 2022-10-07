@@ -21,6 +21,35 @@
   loop: "{{ os_service_init }}"
   become: true
 
+- name: Setup | create systemd drop-in replacement directory
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ item }}.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  become: true
+  loop: "{{ os_systemd_service_name }}"
+
+- name: Setup | create systemd drop-in replacement files for KillMode=mixed
+  ansible.builtin.copy:
+    dest: "/etc/systemd/system/{{ item }}.d/killmode.conf"
+    content: |
+      [Service]
+      KillMode=mixed
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  loop: "{{ os_systemd_service_name }}"
+  become: true
+  notify:
+    - systemctl restart service
+
+- name: Setup | reload systemd
+  ansible.builtin.command: >-
+    systemctl daemon-reload
+  become: true
+
 - name: Setup controller | template configuration
   ansible.builtin.template:
     dest: "{{ item.dest }}"
