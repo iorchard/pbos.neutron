@@ -23,6 +23,7 @@ os_endpoint_interface:
   - { name: 'public', url: "http://{{ keepalived_vip_svc | ternary(keepalived_vip_svc, keepalived_vip) }}:{{ neutron_port }}" }
   - { name: 'internal', url: "http://{{ keepalived_vip }}:{{ neutron_port }}" }
   - { name: 'admin', url: "http://{{ keepalived_vip }}:{{ neutron_port }}" }
+dns_domain: 'pbos.local.'
 # oslo messaging rabbit config
 rabbit_retry_interval: 1
 rabbit_retry_backoff: 2
